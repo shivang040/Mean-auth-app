@@ -7,7 +7,7 @@ var config=require('../config/database');
 var User=require('../models/user');
 
 router.post('/register', (req,res,next)=>{
-    let newUser= new user({
+    let newUser= new User({
        name:req.body.name,
        email:req.body.email,
        username:req.body.username,
@@ -35,7 +35,7 @@ router.post('/authenticate', (req,res,next)=>{
         User.comparePassword(password,user.password,(err,isMatch)=>{
             if(err) throw err;
             if(isMatch){
-                const token=jwt.sign(user,config.secret,{
+                const token=jwt.sign(user.toJSON(),config.secret,{
                     expiresIn:604800
                 });
 
@@ -47,7 +47,7 @@ router.post('/authenticate', (req,res,next)=>{
                         username:user.username,
                         email:user.email
                     }
-                });
+                })
             }else{
                 return res.json({success: false,msg: 'Wrong password'});
             }
